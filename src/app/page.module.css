@@ -1,0 +1,10 @@
+.main {
+  width: 100%;
+}
+
+.anchor {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  scroll-margin-top: var(--header-height);
+}

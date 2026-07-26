@@ -1,0 +1,17 @@
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.icon {
+  width: 0.85em !important;
+  height: 0.85em !important;
+  transform: rotate(-45deg);
+  transition: transform 0.3s ease;
+}
+
+:global([data-cta]:hover) .icon {
+  transform: rotate(0deg) translateX(2px);
+}

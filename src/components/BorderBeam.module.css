@@ -1,0 +1,84 @@
+.beam {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: inherit;
+  height: 100%;
+  background: #ffffff;
+}
+
+.beamSpin {
+  position: absolute;
+  inset: -60%;
+  z-index: 0;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 300deg,
+    rgba(0, 0, 0, 0.08) 320deg,
+    #111111 340deg,
+    #ffffff 350deg,
+    transparent 360deg
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.beam:hover .beamSpin,
+.beam:focus-within .beamSpin {
+  opacity: 1;
+  animation: beamSpin 2.4s linear infinite;
+}
+
+.beam[data-tone="black"] .beamSpin {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 290deg,
+    rgba(0, 0, 0, 0.2) 310deg,
+    #000000 335deg,
+    #2a2a2a 348deg,
+    transparent 360deg
+  );
+}
+
+.beam[data-tone="black"]:hover .beamSpin,
+.beam[data-tone="black"]:focus-within .beamSpin {
+  opacity: 1;
+}
+
+.beamInner {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  border-radius: inherit;
+  margin: 2px;
+  padding: 1.15rem 0 0;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.beam[data-compact="true"] .beamInner {
+  padding: 0;
+}
+
+@keyframes beamSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beam:hover .beamSpin,
+  .beam:focus-within .beamSpin {
+    animation: none;
+    opacity: 0.55;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.12),
+      transparent 40%,
+      rgba(0, 0, 0, 0.08)
+    );
+  }
+}
