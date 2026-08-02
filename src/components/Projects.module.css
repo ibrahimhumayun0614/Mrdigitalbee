@@ -1,15 +1,16 @@
 .projects {
-  padding: 3rem 1rem 4.5rem;
+  padding: 3rem 0 0;
   background: var(--color-secondary);
 }
 
 .inner {
   max-width: 1280px;
   margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
 }
 
 .badge {
@@ -33,13 +34,13 @@
 }
 
 .headerCopy {
-  max-width: 36rem;
+  max-width: 34rem;
 }
 
 .heading {
-  margin: 0 0 0.65rem;
+  margin: 0 0 0.55rem;
   font-family: var(--font-display);
-  font-size: clamp(1.55rem, 3vw, 2.35rem);
+  font-size: clamp(1.55rem, 3vw, 2.25rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.03em;
@@ -71,24 +72,38 @@
   opacity: 0.72;
 }
 
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  margin: 0 0 0.95rem;
+  position: relative;
+  z-index: 4;
+}
+
 .tabs {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.25rem 0.1rem;
-  margin: 0 0 1.75rem;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.2rem;
+  border-radius: 999px;
+  background: #ebebeb;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65) inset;
 }
 
 .tab {
   appearance: none;
   border: 0;
   background: transparent;
-  padding: 0.7rem 1.15rem;
+  padding: 0.55rem 1rem;
   border-radius: 999px;
   font-family: var(--font-body);
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   font-weight: 500;
-  color: #3a3a3a;
+  color: #5c5c5c;
   cursor: pointer;
   transition:
     background 0.2s ease,
@@ -104,113 +119,289 @@
 .tabActive {
   background: #ffffff;
   color: #111111;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.15rem;
+.scrollTrack {
+  position: relative;
+  width: 100%;
 }
 
-.card {
-  min-width: 0;
-  border-radius: 1.5rem;
+.scrollTrackHidden {
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.scrollTrackHidden .stickyPanel,
+.scrollTrackHidden .stickyInner {
+  min-height: 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.stickyPanel {
+  position: sticky;
+  top: var(--header-height, 5rem);
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  min-height: calc(100svh - var(--header-height, 5rem));
+  padding: 0.75rem 0 2.5rem;
+  background: var(--color-secondary);
+  overflow: visible;
+}
+
+.stickyInner {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100svh - var(--header-height, 5rem) - 3.25rem);
+}
+
+.stack {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  margin: auto 0;
+  overflow: visible;
+  border-radius: 1.25rem;
+  background: transparent;
+}
+
+.slide {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 400px;
+  min-height: 0;
+  border-radius: 1.25rem;
   overflow: hidden;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow:
-    0 12px 28px rgba(0, 0, 0, 0.06),
+    0 20px 45px rgba(0, 0, 0, 0.12),
     0 2px 8px rgba(0, 0, 0, 0.04);
+  backface-visibility: hidden;
+  transform-origin: center center;
+  will-change: transform;
 }
 
 .beam {
-  border-radius: 1.5rem;
+  border-radius: 1.25rem;
   height: 100%;
+  min-height: 0;
+}
+
+.slide[aria-hidden="false"] {
+  pointer-events: auto;
+}
+
+.slide[aria-hidden="false"]:hover {
+  box-shadow:
+    0 24px 50px rgba(0, 0, 0, 0.14),
+    0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .cardBody {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
   height: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  background: #ffffff;
 }
 
 .media {
   position: relative;
-  aspect-ratio: 16 / 10;
-  background:
-    linear-gradient(145deg, #2a2a2a 0%, #111 55%, #1a1a1a 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 0;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  background: #0a0a0a;
   overflow: hidden;
 }
 
-.media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-radial-gradient(
-    ellipse 120% 80% at 70% 120%,
-    transparent 0,
-    transparent 14px,
-    rgba(255, 255, 255, 0.08) 15px,
-    transparent 16px
-  );
-  opacity: 0.7;
+.mediaPhoto {
+  padding: 0;
+  background: #0a0a0a;
 }
 
-.mediaLabel {
+.mediaFrame {
   position: absolute;
-  left: 1rem;
-  bottom: 1rem;
+  inset: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.95rem;
+  overflow: hidden;
+}
+
+.mediaImage {
+  position: relative !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 92%;
+  max-height: 92%;
+  border-radius: 0.65rem;
+  object-fit: contain;
+  object-position: center center;
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.slide[aria-hidden="false"] .mediaImage {
+  transform: translateZ(0);
+}
+
+.mediaIndex {
+  position: relative;
   z-index: 1;
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.88);
-  font-family: var(--font-body);
-  font-size: 0.72rem;
-  font-weight: 500;
+  margin: auto 0 1.5rem 1.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  color: rgba(255, 255, 255, 0.14);
+}
+
+.mediaTitle {
+  position: relative;
+  z-index: 1;
+  margin: 0 1.5rem 1.5rem;
+  max-width: 16rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: #ffffff;
 }
 
 .copy {
-  padding: 1.2rem 1.2rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 1.75rem;
+  padding: 3rem 2.5rem;
   background: #ffffff;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.copyMain {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+  padding-bottom: 0;
 }
 
 .category {
-  margin: 0 0 0.4rem;
-  font-family: var(--font-body);
-  font-size: 0.75rem;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: #f1f1f1;
   color: #8a8a8a;
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
 }
 
 .title {
-  margin: 0 0 0.45rem;
+  margin: 0;
+  width: 100%;
   font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: clamp(1.45rem, 2.2vw, 1.85rem);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
   color: var(--color-primary);
+  text-transform: uppercase;
 }
 
 .description {
   margin: 0;
+  width: 100%;
+  max-width: none;
   font-family: var(--font-body);
-  font-size: var(--font-size-description);
-  line-height: 1.6;
+  font-size: 0.9rem;
+  line-height: 1.65;
   color: #6b6b6b;
+  text-wrap: pretty;
+  overflow-wrap: break-word;
 }
 
-@media (min-width: 901px) {
-  .grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+.description + .description {
+  margin-top: 0.75rem;
+}
 
-  .cardFeatured {
-    grid-column: span 2;
-  }
+.projectLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  align-self: flex-start;
+  flex-shrink: 0;
+  padding: 0.65rem 1.15rem;
+  border-radius: 999px;
+  background: #111111;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease;
+}
 
-  .cardFeatured .media {
-    aspect-ratio: 21 / 10;
-  }
+.projectLink:hover {
+  background: #2a2a2a;
+  transform: translateY(-1px);
+}
+
+.projectLinkArrow {
+  display: inline-flex;
+  color: #ffffff;
+  line-height: 0;
+  font-size: 0.78rem;
+}
+
+.projectLinkMuted {
+  display: inline-flex;
+  margin: 0;
+  align-self: flex-start;
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #9a9a9a;
 }
 
 @media (max-width: 900px) {
@@ -219,33 +410,264 @@
     align-items: flex-start;
   }
 
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+  }
+
   .tabs {
     overflow-x: auto;
     flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    width: fit-content;
+    max-width: 100%;
   }
 
   .tabs::-webkit-scrollbar {
     display: none;
   }
 
-  .grid {
-    grid-template-columns: 1fr;
+  .stickyPanel {
+    min-height: calc(100svh - var(--header-height, 4.25rem));
+    padding: 0.65rem 0 2rem;
+  }
+
+  .stickyInner {
+    min-height: calc(100svh - var(--header-height, 4.25rem) - 2.65rem);
+  }
+
+  .stack {
+    height: 480px;
+    margin: auto 0;
+  }
+
+  .slide {
+    height: 480px;
+  }
+
+  .cardBody {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: unset;
+    height: 100%;
+  }
+
+  .media {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
+  }
+
+  .mediaPhoto {
+    padding: 0;
+  }
+
+  .mediaFrame {
+    inset: 0.75rem;
+    border-radius: 0.75rem;
+  }
+
+  .mediaImage {
+    max-width: 94%;
+    max-height: 94%;
+    border-radius: 0.55rem;
+  }
+
+  .mediaIndex {
+    font-size: clamp(2.5rem, 12vw, 3.5rem);
+  }
+
+  .copy {
+    flex: 1 1 auto;
+    padding: 1.5rem 1.25rem 1.5rem;
+    gap: 1.25rem;
+    justify-content: flex-start;
+    min-height: 0;
+    height: auto;
+  }
+
+  .copyMain {
+    gap: 0.55rem;
+    min-height: 0;
+    flex: 0 1 auto;
+  }
+
+  .description {
+    max-width: none;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+
+  .projectLink,
+  .projectLinkMuted {
+    margin-top: 0;
+    flex-shrink: 0;
   }
 }
 
 @media (max-width: 560px) {
   .projects {
-    padding: 2.25rem 0.75rem 3.5rem;
+    padding: 2.25rem 0 0;
   }
 
-  .card,
+  .inner,
+  .stickyInner,
+  .logoInner {
+    padding: 0 0.75rem;
+  }
+
+  .tab {
+    padding: 0.55rem 0.85rem;
+    min-height: 2.5rem;
+  }
+
+  .stack {
+    height: 460px;
+    margin: auto 0;
+  }
+
+  .slide {
+    height: 460px;
+    border-radius: 1.1rem;
+  }
+
   .beam {
-    border-radius: 1.25rem;
+    border-radius: 1.1rem;
+  }
+
+  .media {
+    height: 190px;
+    min-height: 190px;
+    max-height: 190px;
+  }
+
+  .mediaFrame {
+    inset: 0.65rem;
+  }
+
+  .mediaImage {
+    max-width: 94%;
+    max-height: 94%;
+    border-radius: 0.5rem;
+  }
+
+  .description {
+    -webkit-line-clamp: 3;
+  }
+
+  .title {
+    font-size: 1.35rem;
   }
 
   .copy {
-    padding: 1.05rem 1.05rem 1.2rem;
+    padding: 1.35rem 1.15rem 1.35rem;
+    gap: 1.15rem;
+  }
+
+  .projectLink {
+    padding: 0.65rem 1.15rem;
+    min-height: 2.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .projectLink {
+    transition: none;
+  }
+}
+
+/* Logo Design — single-line scroll loop */
+.logoSection {
+  padding: 0 0 3.5rem;
+  background: var(--color-secondary);
+}
+
+.logoInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.logoLoopWrap {
+  position: relative;
+  overflow: hidden;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 0 1.5rem;
+}
+
+.logoCard {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 9.75rem;
+  height: 9.75rem;
+  padding: 0.85rem;
+  box-sizing: border-box;
+  border-radius: 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.logoCardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.logoLoopMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-primary);
+  text-align: center;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+@media (max-width: 900px) {
+  .logoSection {
+    padding: 0 0 2.75rem;
+  }
+
+  .logoLoopWrap {
+    min-height: 140px;
+    padding: 1rem 0 1.25rem;
+  }
+
+  .logoCard {
+    width: 8.25rem;
+    height: 8.25rem;
+    padding: 0.7rem;
+    border-radius: 0.85rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .logoInner {
+    padding: 0 0.75rem;
   }
 }

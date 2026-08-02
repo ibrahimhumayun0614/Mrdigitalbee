@@ -1,4 +1,10 @@
+"use client";
+
 import BorderBeam from "@/components/BorderBeam";
+import MotionReveal, {
+  MotionItem,
+  MotionStagger,
+} from "@/components/MotionReveal";
 import SpotlightCard from "@/components/SpotlightCard";
 import styles from "./WhyChooseUs.module.css";
 
@@ -31,37 +37,43 @@ export default function WhyChooseUs() {
       aria-label="Why Choose Us"
     >
       <div className={styles.inner}>
-        <SpotlightCard
-          className={styles.card}
-          spotlightColor="rgba(255, 255, 255, 0.28)"
-        >
-          <div className={styles.waves} aria-hidden />
-          <div className={styles.content}>
-            <span className={styles.badge}>Why Choose Us</span>
-            <h2 className={styles.heading}>
-              Built for brands that want more than just a website.
-            </h2>
-            <p className={styles.description}>
-              We combine strategy, design, and development into one clear
-              process — so your digital presence looks sharp, works hard, and
-              grows with you.
-            </p>
-          </div>
+        <MotionReveal y={36}>
+          <SpotlightCard
+            className={styles.card}
+            spotlightColor="rgba(255, 255, 255, 0.28)"
+          >
+            <div className={styles.waves} aria-hidden />
+            <div className={styles.content}>
+              <span className={styles.badge}>Why Choose Us</span>
+              <h2 className={styles.heading}>
+                Built for brands that want more than just a website.
+              </h2>
+              <p className={styles.description}>
+                We combine strategy, design, and development into one clear
+                process — so your digital presence looks sharp, works hard, and
+                grows with you.
+              </p>
+            </div>
 
-          <div className={styles.grid}>
-            {REASONS.map((reason) => (
-              <article key={reason.number} className={styles.featureCard}>
-                <BorderBeam className={styles.featureBeam} compact tone="black">
-                  <div className={styles.featureInner}>
-                    <span className={styles.featureNumber}>{reason.number}</span>
-                    <h3 className={styles.featureTitle}>{reason.title}</h3>
-                    <p className={styles.featureBody}>{reason.description}</p>
-                  </div>
-                </BorderBeam>
-              </article>
-            ))}
-          </div>
-        </SpotlightCard>
+            <MotionStagger className={styles.grid} stagger={0.14} delayChildren={0.15}>
+              {REASONS.map((reason) => (
+                <MotionItem key={reason.number} y={24}>
+                  <article className={styles.featureCard}>
+                    <BorderBeam className={styles.featureBeam} compact tone="black">
+                      <div className={styles.featureInner}>
+                        <span className={styles.featureNumber}>
+                          {reason.number}
+                        </span>
+                        <h3 className={styles.featureTitle}>{reason.title}</h3>
+                        <p className={styles.featureBody}>{reason.description}</p>
+                      </div>
+                    </BorderBeam>
+                  </article>
+                </MotionItem>
+              ))}
+            </MotionStagger>
+          </SpotlightCard>
+        </MotionReveal>
       </div>
     </section>
   );

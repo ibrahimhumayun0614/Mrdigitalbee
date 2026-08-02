@@ -1,57 +1,82 @@
 .footer {
   width: 100%;
   background: var(--color-secondary);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 1.5rem 2rem 2rem;
+  padding: 1.35rem 2rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.25rem;
-}
-
-.credit {
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  font-weight: 400;
-  color: #6b7280;
-  letter-spacing: 0.01em;
+  gap: 1rem;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.5rem;
   flex-shrink: 0;
+  min-width: 0;
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--color-primary);
   line-height: 1;
+  text-decoration: none;
 }
 
 .brandMark {
   display: block;
-  width: 1.55rem;
+  width: 1.45rem;
   height: auto;
   flex-shrink: 0;
   object-fit: contain;
 }
 
-@media (max-width: 560px) {
+.credit {
+  margin: 0;
+  flex-shrink: 1;
+  text-align: right;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: #6b7280;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
   .inner {
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    padding: 1.35rem 1.25rem 1.75rem;
+    padding: 1.15rem 1.25rem 1.35rem;
+    gap: 0.75rem;
   }
 
   .brand {
-    order: -1;
+    font-size: 0.95rem;
+  }
+
+  .brandMark {
+    width: 1.3rem;
+  }
+
+  .credit {
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .brand span {
+    max-width: 7.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .credit {
+    font-size: 0.68rem;
   }
 }

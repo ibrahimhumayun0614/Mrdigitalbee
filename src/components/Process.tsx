@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import BorderBeam from "@/components/BorderBeam";
+import MotionReveal from "@/components/MotionReveal";
 import styles from "./Process.module.css";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -60,9 +61,13 @@ export default function Process() {
         return;
       }
 
-      gsap.set(delivery, { opacity: 0, x: -24 });
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
+      const motionScale = isMobile ? 0.45 : 1;
+      const durationScale = isMobile ? 1.35 : 1;
 
-      if (pathSvg) {
+      gsap.set(delivery, { opacity: 0, x: isMobile ? -12 : -24 });
+
+      if (pathSvg && !isMobile) {
         gsap.fromTo(
           pathSvg,
           { clipPath: "inset(0 0 100% 0)" },
@@ -81,16 +86,16 @@ export default function Process() {
 
       cards.forEach((card, index) => {
         const fromRight = index % 2 === 0;
-        const restRotate = fromRight ? 3 : -3;
+        const restRotate = isMobile ? 0 : fromRight ? 3 : -3;
 
         gsap.fromTo(
           card,
           {
             opacity: 0,
-            y: 36,
-            x: fromRight ? 28 : -28,
-            scale: 0.97,
-            rotate: fromRight ? 7 : -7,
+            y: 36 * motionScale,
+            x: (fromRight ? 28 : -28) * motionScale,
+            scale: isMobile ? 0.99 : 0.97,
+            rotate: isMobile ? 0 : fromRight ? 7 : -7,
           },
           {
             opacity: 1,
@@ -98,8 +103,8 @@ export default function Process() {
             x: 0,
             scale: 1,
             rotate: restRotate,
-            duration: 0.85,
-            ease: "power3.out",
+            duration: 0.85 * durationScale,
+            ease: isMobile ? "power2.out" : "power3.out",
             scrollTrigger: {
               trigger: card,
               start: "top 82%",
@@ -115,8 +120,8 @@ export default function Process() {
             { scale: 0 },
             {
               scale: 1,
-              duration: 0.45,
-              ease: "back.out(1.8)",
+              duration: 0.45 * durationScale,
+              ease: isMobile ? "power2.out" : "back.out(1.8)",
               delay: 0.15,
               scrollTrigger: {
                 trigger: card,
@@ -131,7 +136,7 @@ export default function Process() {
       gsap.to(delivery, {
         opacity: 1,
         x: 0,
-        duration: 0.7,
+        duration: 0.7 * durationScale,
         ease: "power2.out",
         scrollTrigger: {
           trigger: delivery,
@@ -171,16 +176,18 @@ export default function Process() {
             />
           </svg>
 
-          <header className={styles.header}>
-            <span className={styles.badge}>Our Process</span>
-            <h2 className={styles.heading}>
-              Let us show you how we drive your brand to new heights.
-            </h2>
-            <p className={styles.lead}>
-              From concept to final product, our streamlined process ensures
-              results that make an impact.
-            </p>
-          </header>
+          <MotionReveal y={24}>
+            <header className={styles.header}>
+              <span className={styles.badge}>Our Process</span>
+              <h2 className={styles.heading}>
+                Let us show you how we drive your brand to new heights.
+              </h2>
+              <p className={styles.lead}>
+                From concept to final product, our streamlined process ensures
+                results that make an impact.
+              </p>
+            </header>
+          </MotionReveal>
 
           <div className={styles.flow}>
             <ol className={styles.steps}>

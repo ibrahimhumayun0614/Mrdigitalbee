@@ -4,6 +4,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SmoothScroll from "@/components/SmoothScroll";
 import DebugProbe from "@/components/DebugProbe";
 import "./globals.css";
 
@@ -33,9 +34,11 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable} ${inter.variable}`}>
       <body>
         <DebugProbe />
-        <Header />
-        {children}
-        <Footer />
+        <SmoothScroll>
+          <Header />
+          {children}
+          <Footer />
+        </SmoothScroll>
       </body>
     </html>
   );

@@ -1,0 +1,113 @@
+.iconWrap {
+  position: relative;
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  animation: iconFloat 5.5s ease-in-out infinite;
+}
+
+.iconRing {
+  position: absolute;
+  inset: -5px;
+  border-radius: 999px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.45);
+  animation: iconSpin 14s linear infinite;
+  pointer-events: none;
+}
+
+.iconBadge {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #000000;
+  box-shadow:
+    0 0 0 4px rgba(0, 0, 0, 0.35),
+    0 8px 18px rgba(0, 0, 0, 0.28);
+  animation: iconPulse 5.5s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes iconPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 4px rgba(0, 0, 0, 0.35),
+      0 8px 18px rgba(0, 0, 0, 0.28);
+  }
+  50% {
+    box-shadow:
+      0 0 0 6px rgba(255, 255, 255, 0.18),
+      0 10px 22px rgba(0, 0, 0, 0.35);
+  }
+}
+
+@keyframes iconSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iconWrap,
+  .iconRing,
+  .iconBadge {
+    animation: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .cardContent {
+    padding: 1.25rem !important;
+  }
+
+  .iconWrap {
+    animation-duration: 7.5s;
+    animation-timing-function: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  }
+
+  .iconBadge {
+    animation-duration: 7.5s;
+    animation-timing-function: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  }
+
+  .iconRing {
+    animation-duration: 22s;
+  }
+
+  @keyframes iconFloat {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+}
+
+@media (max-width: 560px) {
+  .serviceCard {
+    aspect-ratio: 3 / 4 !important;
+  }
+}

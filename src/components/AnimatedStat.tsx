@@ -13,7 +13,7 @@ type AnimatedStatProps = {
 export default function AnimatedStat({
   value = 100,
   suffix = "+",
-  duration = 1600,
+  duration = 5200,
   label,
 }: AnimatedStatProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -46,7 +46,8 @@ export default function AnimatedStat({
 
     const tick = (now: number) => {
       const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
+      // Gentle ease — keeps counting visible for most of the duration
+      const eased = 1 - Math.pow(1 - progress, 1.6);
       setDisplay(Math.round(value * eased));
       if (progress < 1) {
         frame = requestAnimationFrame(tick);

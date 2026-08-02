@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 interface Testimonial {
@@ -48,6 +48,26 @@ const TestimonialsColumn = (props: {
   testimonials: Testimonial[];
   duration?: number;
 }) => {
+  const [canHover, setCanHover] = useState(false);
+  const [columnDuration, setColumnDuration] = useState(props.duration || 70);
+
+  useEffect(() => {
+    const hoverMq = window.matchMedia("(hover: hover)");
+    const mobileMq = window.matchMedia("(max-width: 768px)");
+    const sync = () => {
+      setCanHover(hoverMq.matches);
+      const base = props.duration || 70;
+      setColumnDuration(mobileMq.matches ? base * 1.35 : base);
+    };
+    sync();
+    hoverMq.addEventListener("change", sync);
+    mobileMq.addEventListener("change", sync);
+    return () => {
+      hoverMq.removeEventListener("change", sync);
+      mobileMq.removeEventListener("change", sync);
+    };
+  }, [props.duration]);
+
   return (
     <div className={props.className}>
       <motion.ul
@@ -55,12 +75,13 @@ const TestimonialsColumn = (props: {
           translateY: "-50%",
         }}
         transition={{
-          duration: props.duration || 70,
+          duration: columnDuration,
           repeat: Infinity,
           ease: "linear",
           repeatType: "loop",
         }}
         className="m-0 flex list-none flex-col gap-6 bg-transparent p-0 pb-6 transition-colors duration-300"
+        style={{ willChange: "transform" }}
       >
         {[
           ...new Array(2).fill(0).map((_, index) => (
@@ -71,29 +92,37 @@ const TestimonialsColumn = (props: {
                     key={`${index}-${i}`}
                     aria-hidden={index === 1}
                     tabIndex={index === 1 ? -1 : 0}
-                    whileHover={{
-                      scale: 1.02,
-                      y: -6,
-                      boxShadow:
-                        "0 25px 50px -12px rgba(0, 0, 0, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05)",
-                      transition: {
-                        type: "spring",
-                        stiffness: 400,
-                        damping: 17,
-                      },
-                    }}
-                    whileFocus={{
-                      scale: 1.02,
-                      y: -6,
-                      boxShadow:
-                        "0 25px 50px -12px rgba(0, 0, 0, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05)",
-                      transition: {
-                        type: "spring",
-                        stiffness: 400,
-                        damping: 17,
-                      },
-                    }}
-                    className="group w-full cursor-default select-none rounded-[1.5rem] border border-neutral-200 bg-white p-8 shadow-[0_12px_28px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-black/20"
+                    whileHover={
+                      canHover
+                        ? {
+                            scale: 1.02,
+                            y: -6,
+                            boxShadow:
+                              "0 25px 50px -12px rgba(0, 0, 0, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05)",
+                            transition: {
+                              type: "spring",
+                              stiffness: 400,
+                              damping: 17,
+                            },
+                          }
+                        : undefined
+                    }
+                    whileFocus={
+                      canHover
+                        ? {
+                            scale: 1.02,
+                            y: -6,
+                            boxShadow:
+                              "0 25px 50px -12px rgba(0, 0, 0, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05)",
+                            transition: {
+                              type: "spring",
+                              stiffness: 400,
+                              damping: 17,
+                            },
+                          }
+                        : undefined
+                    }
+                    className="group w-full cursor-default select-none rounded-[1.5rem] border border-neutral-200 bg-white p-5 shadow-[0_12px_28px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-black/20 sm:p-8"
                   >
                     <blockquote className="m-0 p-0">
                       <p
@@ -113,7 +142,7 @@ const TestimonialsColumn = (props: {
                           {name} - {location}
                         </cite>
                         <span
-                          className="text-[0.78rem] font-semibold uppercase leading-5 tracking-[0.03em] text-[#5c5c5c]"
+                          className="break-words text-[0.78rem] font-semibold uppercase leading-5 tracking-[0.03em] text-[#5c5c5c] normal-case sm:uppercase"
                           style={{ fontFamily: "var(--font-display)" }}
                         >
                           {role}

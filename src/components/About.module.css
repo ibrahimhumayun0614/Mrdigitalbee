@@ -22,10 +22,10 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 0.95rem;
+  gap: 1.05rem;
   padding: 0.35rem 0;
-  width: max-content;
-  max-width: 100%;
+  width: 100%;
+  max-width: 38rem;
   min-width: 0;
   justify-self: start;
 }
@@ -44,7 +44,7 @@
 }
 
 .headingWrap {
-  width: max-content;
+  width: 100%;
   max-width: 100%;
 }
 
@@ -56,24 +56,29 @@
   letter-spacing: -0.025em;
   color: var(--color-primary);
   margin: 0;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .bodyStack {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 1rem;
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
 }
 
 .body {
   font-family: var(--font-body);
   font-size: var(--font-size-description);
-  line-height: 1.65;
+  line-height: 1.7;
   color: #6b6b6b;
-  text-align: justify;
+  text-align: left;
   margin: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
 }
 
 .panelSlot {
@@ -81,6 +86,12 @@
   min-height: 100%;
   align-self: stretch;
   min-width: 0;
+  height: 100%;
+}
+
+.panelSlot > * {
+  height: 100%;
+  min-height: 100%;
 }
 
 .fullBlackSlot {
@@ -233,6 +244,12 @@
     grid-template-columns: 1fr;
   }
 
+  .copy,
+  .headingWrap {
+    width: 100%;
+    max-width: 100%;
+  }
+
   .panelSlot {
     min-height: 280px;
     order: 1;
@@ -256,6 +273,16 @@
   }
 }
 
+@media (max-width: 768px) {
+  .about {
+    padding: 2rem 1rem 3.25rem;
+  }
+
+  .heading {
+    font-size: clamp(1.35rem, 5.5vw, 1.75rem);
+  }
+}
+
 @media (max-width: 560px) {
   .about {
     padding: 1.5rem 0.75rem 3rem;
@@ -263,7 +290,6 @@
 
   .heading {
     max-width: none;
-    white-space: normal;
   }
 
   .tags {

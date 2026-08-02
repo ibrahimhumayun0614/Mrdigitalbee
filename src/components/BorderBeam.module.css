@@ -26,9 +26,22 @@
 }
 
 .beam:hover .beamSpin,
-.beam:focus-within .beamSpin {
+.beam:focus-within .beamSpin,
+.beam[data-active="true"] .beamSpin {
   opacity: 1;
-  animation: beamSpin 2.4s linear infinite;
+  animation: beamSpin 2.8s linear infinite;
+}
+
+@media (max-width: 768px) {
+  .beam:hover .beamSpin,
+  .beam:focus-within .beamSpin,
+  .beam[data-active="true"] .beamSpin {
+    animation-duration: 4.8s;
+  }
+
+  .beamSpin {
+    transition: opacity 0.45s ease;
+  }
 }
 
 .beam[data-tone="black"] .beamSpin {
@@ -44,7 +57,8 @@
 }
 
 .beam[data-tone="black"]:hover .beamSpin,
-.beam[data-tone="black"]:focus-within .beamSpin {
+.beam[data-tone="black"]:focus-within .beamSpin,
+.beam[data-tone="black"][data-active="true"] .beamSpin {
   opacity: 1;
 }
 
@@ -61,6 +75,8 @@
 
 .beam[data-compact="true"] .beamInner {
   padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes beamSpin {
@@ -71,7 +87,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .beam:hover .beamSpin,
-  .beam:focus-within .beamSpin {
+  .beam:focus-within .beamSpin,
+  .beam[data-active="true"] .beamSpin {
     animation: none;
     opacity: 0.55;
     background: linear-gradient(

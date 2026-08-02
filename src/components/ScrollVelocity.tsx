@@ -85,25 +85,43 @@ function VelocityText({
   parallaxStyle,
   scrollerStyle,
 }: VelocityTextProps) {
+  const copyRef = useRef<HTMLSpanElement>(null);
+  const copyWidth = useElementWidth(copyRef);
+  const isMobileRef = useRef(false);
+  const [springConfig, setSpringConfig] = useState({
+    damping: damping ?? 50,
+    stiffness: stiffness ?? 400,
+  });
+
+  useLayoutEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const sync = () => {
+      isMobileRef.current = mq.matches;
+      setSpringConfig({
+        damping: mq.matches ? (damping ?? 50) + 20 : (damping ?? 50),
+        stiffness: mq.matches
+          ? Math.round((stiffness ?? 400) * 0.55)
+          : (stiffness ?? 400),
+      });
+    };
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, [damping, stiffness]);
+
   const baseX = useMotionValue(0);
   const scrollOptions = scrollContainerRef
     ? { container: scrollContainerRef }
     : {};
   const { scrollY } = useScroll(scrollOptions);
   const scrollVelocity = useVelocity(scrollY);
-  const smoothVelocity = useSpring(scrollVelocity, {
-    damping: damping ?? 50,
-    stiffness: stiffness ?? 400,
-  });
+  const smoothVelocity = useSpring(scrollVelocity, springConfig);
   const velocityFactor = useTransform(
     smoothVelocity,
     velocityMapping?.input || [0, 1000],
     velocityMapping?.output || [0, 5],
     { clamp: false },
   );
-
-  const copyRef = useRef<HTMLSpanElement>(null);
-  const copyWidth = useElementWidth(copyRef);
 
   function wrap(min: number, max: number, v: number) {
     const range = max - min;
@@ -117,11 +135,13 @@ function VelocityText({
   });
 
   const directionFactor = useRef(1);
-  // #region agent log
-  const debugFrameCount = useRef(0);
-  // #endregion
   useAnimationFrame((_t, delta) => {
-    let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
+    const mobileScale = isMobileRef.current ? 0.55 : 1;
+    let moveBy =
+      directionFactor.current *
+      baseVelocity *
+      mobileScale *
+      (delta / 1000);
 
     if (velocityFactor.get() < 0) {
       directionFactor.current = -1;
@@ -129,39 +149,9 @@ function VelocityText({
       directionFactor.current = 1;
     }
 
-    moveBy += directionFactor.current * moveBy * velocityFactor.get();
+    const factor = velocityFactor.get() * (isMobileRef.current ? 0.65 : 1);
+    moveBy += directionFactor.current * moveBy * factor;
     baseX.set(baseX.get() + moveBy);
-    // #region agent log
-    debugFrameCount.current += 1;
-    if (debugFrameCount.current === 30 || debugFrameCount.current === 120) {
-      fetch(
-        "http://127.0.0.1:7534/ingest/c22918dd-7bce-4feb-8d8b-1158926eba7a",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Debug-Session-Id": "4f46ed",
-          },
-          body: JSON.stringify({
-            sessionId: "4f46ed",
-            runId: "site-check",
-            hypothesisId: "C",
-            location: "ScrollVelocity.tsx:frame",
-            message: "scrollvelocity-sample",
-            data: {
-              frame: debugFrameCount.current,
-              copyWidth,
-              baseVelocity,
-              moveBy,
-              velocityFactor: velocityFactor.get(),
-              baseX: baseX.get(),
-            },
-            timestamp: Date.now(),
-          }),
-        },
-      ).catch(() => {});
-    }
-    // #endregion
   });
 
   const spans = [];

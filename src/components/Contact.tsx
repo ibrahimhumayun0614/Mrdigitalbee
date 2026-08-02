@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useId, useRef, useState } from "react";
 import { ChevronDown, Mail, MapPin, Phone } from "lucide-react";
 import BorderBeam from "@/components/BorderBeam";
 import CtaArrow from "@/components/CtaArrow";
+import MotionReveal from "@/components/MotionReveal";
 import SpotlightCard from "@/components/SpotlightCard";
 import styles from "./Contact.module.css";
 
@@ -210,7 +211,7 @@ export default function Contact() {
           <div className={styles.waves} aria-hidden />
 
           <div className={styles.layout}>
-            <div className={styles.info}>
+            <MotionReveal className={styles.info} y={28} x={-12}>
               <span className={styles.badge}>Contact Us</span>
               <h2 className={styles.heading}>
                 Let’s build something that works for your brand.
@@ -273,9 +274,9 @@ export default function Contact() {
                   </a>
                 </div>
               </div>
-            </div>
+            </MotionReveal>
 
-            <div className={styles.formWrap}>
+            <MotionReveal className={styles.formWrap} delay={0.12} y={32} x={12}>
               <BorderBeam className={styles.formBeam} compact tone="black">
                 <div className={styles.formPanel}>
                   {submitted ? (
@@ -490,7 +491,7 @@ export default function Contact() {
                   )}
                 </div>
               </BorderBeam>
-            </div>
+            </MotionReveal>
           </div>
         </SpotlightCard>
       </div>

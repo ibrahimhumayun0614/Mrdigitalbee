@@ -17,6 +17,7 @@ type PixelCardProps = {
   speed?: number;
   colors?: string;
   noFocus?: boolean;
+  alwaysActive?: boolean;
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
@@ -189,6 +190,7 @@ export default function PixelCard({
   speed,
   colors,
   noFocus,
+  alwaysActive = false,
   className = "",
   style,
   children,
@@ -197,7 +199,8 @@ export default function PixelCard({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pixelsRef = useRef<Pixel[]>([]);
   const animationRef = useRef<number | null>(null);
-  const timePreviousRef = useRef(performance.now());
+  const timePreviousRef = useRef(0);
+  const modeRef = useRef<"appear" | "disappear" | null>(null);
   const reducedMotion = useRef(
     typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -209,123 +212,219 @@ export default function PixelCard({
   const finalColors = colors ?? variantCfg.colors;
   const finalNoFocus = noFocus ?? variantCfg.noFocus;
 
-  const initPixels = () => {
-    if (!containerRef.current || !canvasRef.current) return;
+  useEffect(() => {
+    const container = containerRef.current;
+    const canvas = canvasRef.current;
+    if (!container || !canvas) return;
 
-    const rect = containerRef.current.getBoundingClientRect();
-    const width = Math.floor(rect.width);
-    const height = Math.floor(rect.height);
-    const ctx = canvasRef.current.getContext("2d");
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    canvasRef.current.width = width;
-    canvasRef.current.height = height;
-    canvasRef.current.style.width = `${width}px`;
-    canvasRef.current.style.height = `${height}px`;
+    const stopLoop = () => {
+      if (animationRef.current !== null) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+      modeRef.current = null;
+    };
 
-    const colorsArray = finalColors.split(",");
-    const pxs: Pixel[] = [];
-    const gapSize = Number.parseInt(String(finalGap), 10);
+    const initPixels = () => {
+      const rect = container.getBoundingClientRect();
+      const width = Math.floor(rect.width);
+      const height = Math.floor(rect.height);
+      if (width < 2 || height < 2) {
+        pixelsRef.current = [];
+        return false;
+      }
 
-    for (let x = 0; x < width; x += gapSize) {
-      for (let y = 0; y < height; y += gapSize) {
-        const color =
-          colorsArray[Math.floor(Math.random() * colorsArray.length)];
-        const dx = x - width / 2;
-        const dy = y - height / 2;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const delay = reducedMotion ? 0 : distance;
+      canvas.width = width;
+      canvas.height = height;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
 
-        pxs.push(
-          new Pixel(
-            canvasRef.current,
+      const colorsArray = finalColors.split(",");
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
+      // Fewer pixels on mobile = smoother frame rate
+      const baseGap = Number.parseInt(String(finalGap), 10) || 5;
+      const gapSize = isMobile ? Math.max(baseGap + 3, 8) : baseGap;
+      const effectiveSpeed = getEffectiveSpeed(
+        isMobile ? Math.min(finalSpeed, 40) : finalSpeed,
+        reducedMotion,
+      );
+      const pxs: Pixel[] = [];
+
+      for (let x = 0; x < width; x += gapSize) {
+        for (let y = 0; y < height; y += gapSize) {
+          const color =
+            colorsArray[Math.floor(Math.random() * colorsArray.length)];
+          const dx = x - width / 2;
+          const dy = y - height / 2;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const delay = reducedMotion
+            ? 0
+            : alwaysActive
+              ? distance * (isMobile ? 0.12 : 0.2)
+              : distance;
+
+          const pixel = new Pixel(
+            canvas,
             ctx,
             x,
             y,
             color,
-            getEffectiveSpeed(finalSpeed, reducedMotion),
+            alwaysActive
+              ? Math.max(effectiveSpeed, isMobile ? 0.022 : 0.03)
+              : effectiveSpeed,
             delay,
-          ),
-        );
+          );
+
+          if (alwaysActive && !reducedMotion) {
+            pixel.size = pixel.maxSize;
+            pixel.isShimmer = true;
+            pixel.isIdle = false;
+            pixel.counter = pixel.delay + 1;
+          } else if (reducedMotion) {
+            pixel.size = pixel.maxSize;
+            pixel.isShimmer = false;
+            pixel.isIdle = true;
+          }
+
+          pxs.push(pixel);
+        }
       }
-    }
-    pixelsRef.current = pxs;
-  };
 
-  const doAnimate = (fnName: "appear" | "disappear") => {
-    animationRef.current = requestAnimationFrame(() => doAnimate(fnName));
-    const timeNow = performance.now();
-    const timePassed = timeNow - timePreviousRef.current;
-    const timeInterval = 1000 / 60;
+      pixelsRef.current = pxs;
+      return pxs.length > 0;
+    };
 
-    if (timePassed < timeInterval) return;
-    timePreviousRef.current = timeNow - (timePassed % timeInterval);
+    const drawStatic = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pixelsRef.current.forEach((pixel) => pixel.draw());
+    };
 
-    const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx || !canvasRef.current) return;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const frameMs = isMobile ? 1000 / 45 : 1000 / 60;
 
-    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    const tick = (now: number) => {
+      animationRef.current = requestAnimationFrame(tick);
 
-    let allIdle = true;
-    for (let i = 0; i < pixelsRef.current.length; i++) {
-      const pixel = pixelsRef.current[i];
-      pixel[fnName]();
-      if (!pixel.isIdle) {
-        allIdle = false;
+      const mode = modeRef.current;
+      if (!mode) return;
+
+      if (!timePreviousRef.current) {
+        timePreviousRef.current = now;
       }
-    }
-    if (allIdle && animationRef.current !== null) {
-      cancelAnimationFrame(animationRef.current);
-    }
-  };
 
-  const handleAnimation = (name: "appear" | "disappear") => {
-    if (animationRef.current !== null) {
-      cancelAnimationFrame(animationRef.current);
-    }
-    animationRef.current = requestAnimationFrame(() => doAnimate(name));
-  };
+      const timePassed = now - timePreviousRef.current;
+      if (timePassed < frameMs) return;
+      timePreviousRef.current = now - (timePassed % frameMs);
 
-  const onMouseEnter = () => handleAnimation("appear");
-  const onMouseLeave = () => handleAnimation("disappear");
-  const onFocus = (e: FocusEvent<HTMLDivElement>) => {
-    if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
-    handleAnimation("appear");
-  };
-  const onBlur = (e: FocusEvent<HTMLDivElement>) => {
-    if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
-    handleAnimation("disappear");
-  };
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  useEffect(() => {
-    initPixels();
-    const observer = new ResizeObserver(() => {
-      initPixels();
-    });
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-    return () => {
-      observer.disconnect();
-      if (animationRef.current !== null) {
-        cancelAnimationFrame(animationRef.current);
+      let allIdle = true;
+      for (const pixel of pixelsRef.current) {
+        pixel[mode]();
+        if (!pixel.isIdle) allIdle = false;
+      }
+
+      if (allIdle && !alwaysActive) {
+        stopLoop();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [finalGap, finalSpeed, finalColors, finalNoFocus]);
+
+    const startMode = (mode: "appear" | "disappear") => {
+      modeRef.current = mode;
+      timePreviousRef.current = 0;
+      if (animationRef.current === null) {
+        animationRef.current = requestAnimationFrame(tick);
+      }
+    };
+
+    const boot = () => {
+      const ready = initPixels();
+      if (!ready) return;
+
+      if (reducedMotion) {
+        drawStatic();
+        return;
+      }
+
+      if (alwaysActive) {
+        startMode("appear");
+      }
+    };
+
+    boot();
+
+    const observer = new ResizeObserver(() => {
+      const ready = initPixels();
+      if (!ready) return;
+      if (reducedMotion) {
+        drawStatic();
+        return;
+      }
+      if (alwaysActive) {
+        startMode("appear");
+      }
+    });
+    observer.observe(container);
+
+    const onMouseEnter = () => {
+      if (alwaysActive || reducedMotion) return;
+      startMode("appear");
+    };
+    const onMouseLeave = () => {
+      if (alwaysActive || reducedMotion) return;
+      startMode("disappear");
+    };
+    const onFocus = (e: FocusEvent<HTMLDivElement>) => {
+      if (alwaysActive || reducedMotion || finalNoFocus) return;
+      if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+      startMode("appear");
+    };
+    const onBlur = (e: FocusEvent<HTMLDivElement>) => {
+      if (alwaysActive || reducedMotion || finalNoFocus) return;
+      if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+      startMode("disappear");
+    };
+
+    container.addEventListener("mouseenter", onMouseEnter);
+    container.addEventListener("mouseleave", onMouseLeave);
+    container.addEventListener("focusin", onFocus as unknown as EventListener);
+    container.addEventListener("focusout", onBlur as unknown as EventListener);
+
+    return () => {
+      observer.disconnect();
+      container.removeEventListener("mouseenter", onMouseEnter);
+      container.removeEventListener("mouseleave", onMouseLeave);
+      container.removeEventListener(
+        "focusin",
+        onFocus as unknown as EventListener,
+      );
+      container.removeEventListener(
+        "focusout",
+        onBlur as unknown as EventListener,
+      );
+      stopLoop();
+    };
+  }, [
+    alwaysActive,
+    finalColors,
+    finalGap,
+    finalNoFocus,
+    finalSpeed,
+    reducedMotion,
+  ]);
 
   return (
     <div
       ref={containerRef}
-      className={`pixel-card ${className}`.trim()}
+      className={`pixel-card ${alwaysActive ? "pixel-card-always" : ""} ${className}`.trim()}
       style={style}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onFocus={finalNoFocus ? undefined : onFocus}
-      onBlur={finalNoFocus ? undefined : onBlur}
-      tabIndex={finalNoFocus ? -1 : 0}
+      tabIndex={finalNoFocus || alwaysActive ? -1 : 0}
     >
       <canvas className="pixel-canvas" ref={canvasRef} />
+      <div className="pixel-card-scrim" aria-hidden />
       {children}
     </div>
   );

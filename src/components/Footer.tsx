@@ -4,10 +4,6 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
-        <p className={styles.credit}>
-          © {new Date().getFullYear()} | Developed by Muhammed
-        </p>
-
         <a href="#home" className={styles.brand}>
           <img
             src="/logo.png"
@@ -18,6 +14,10 @@ export default function Footer() {
           />
           <span>Mrdigital Bee</span>
         </a>
+
+        <p className={styles.credit}>
+          © {new Date().getFullYear()} | Developed by Muhammed
+        </p>
       </div>
     </footer>
   );

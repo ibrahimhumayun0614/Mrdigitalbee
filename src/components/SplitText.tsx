@@ -90,6 +90,14 @@ export default function SplitText({
             : `+=${marginValue}${marginUnit}`;
       const start = `top ${startPct}%${sign}`;
 
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
+      const animDuration = isMobile ? duration * 1.35 : duration;
+      const animEase = isMobile ? "power2.out" : ease;
+      const animFrom = isMobile
+        ? { ...from, y: typeof from.y === "number" ? from.y * 0.55 : from.y }
+        : from;
+      const stagger = (isMobile ? delay * 1.25 : delay) / 1000;
+
       let targets: Element[] | undefined;
       const assignTargets = (self: GSAPSplitText) => {
         if (splitType.includes("chars") && self.chars?.length)
@@ -113,12 +121,12 @@ export default function SplitText({
           assignTargets(self);
           return gsap.fromTo(
             targets!,
-            { ...from },
+            { ...animFrom },
             {
               ...to,
-              duration,
-              ease,
-              stagger: delay / 1000,
+              duration: animDuration,
+              ease: animEase,
+              stagger,
               scrollTrigger: {
                 trigger: el,
                 start,

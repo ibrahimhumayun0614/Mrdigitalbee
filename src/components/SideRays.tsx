@@ -114,8 +114,10 @@ export default function SideRays({
 
       if (!containerRef.current) return;
 
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
       const renderer = new Renderer({
-        dpr: Math.min(window.devicePixelRatio, 2),
+        // Cap DPR on mobile — biggest win for smooth WebGL
+        dpr: Math.min(window.devicePixelRatio, isMobile ? 1 : 2),
         alpha: true,
       });
       rendererRef.current = renderer;
@@ -238,9 +240,13 @@ void main() {
       const mesh = new Mesh(gl, { geometry, program });
       meshRef.current = mesh;
 
+      const maxDpr = isMobile ? 1 : 2;
+      let lastFrame = 0;
+      const frameInterval = isMobile ? 1000 / 30 : 0;
+
       const updateSize = () => {
         if (!containerRef.current || !renderer) return;
-        renderer.dpr = Math.min(window.devicePixelRatio, 2);
+        renderer.dpr = Math.min(window.devicePixelRatio, maxDpr);
         const { clientWidth: w, clientHeight: h } = containerRef.current;
         renderer.setSize(w, h);
         uniforms.iResolution.value = [w * renderer.dpr, h * renderer.dpr];
@@ -249,10 +255,12 @@ void main() {
       const loop = (t: number) => {
         if (!rendererRef.current || !uniformsRef.current || !meshRef.current)
           return;
+        animationIdRef.current = requestAnimationFrame(loop);
+        if (frameInterval && t - lastFrame < frameInterval) return;
+        lastFrame = t;
         uniforms.iTime.value = t * 0.001;
         try {
           renderer.render({ scene: mesh });
-          animationIdRef.current = requestAnimationFrame(loop);
         } catch {
           return;
         }
