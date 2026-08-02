@@ -378,7 +378,6 @@ export default function Projects() {
   const { scrollYProgress } = useScroll({
     target: trackRef,
     offset: ["start start", "end end"],
-    layoutEffect: false,
   });
 
   const scaled = useTransform(scrollYProgress, (p) =>
