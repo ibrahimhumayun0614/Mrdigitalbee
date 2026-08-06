@@ -321,6 +321,7 @@ export default function Contact() {
                             autoComplete="name"
                             placeholder="Your name"
                             value={name}
+                            maxLength={100}
                             required
                             aria-required="true"
                             aria-invalid={Boolean(errors.name)}
@@ -348,6 +349,7 @@ export default function Contact() {
                             autoComplete="email"
                             placeholder="you@company.com"
                             value={email}
+                            maxLength={254}
                             required
                             aria-required="true"
                             aria-invalid={Boolean(errors.email)}
@@ -455,6 +457,7 @@ export default function Contact() {
                           rows={5}
                           placeholder="Goals, timeline, and anything we should know…"
                           value={message}
+                          maxLength={5000}
                           required
                           aria-required="true"
                           aria-invalid={Boolean(errors.message)}
