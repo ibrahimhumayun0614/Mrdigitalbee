@@ -19,7 +19,7 @@ const DETAILS = [
     icon: Phone,
     label: "Phone",
     value: "+91 63809 86703",
-    href: "tel:+916380986703",
+    href: "https://wa.me/916380986703",
   },
   {
     icon: MapPin,
@@ -197,10 +197,21 @@ export default function Contact() {
                     </>
                   );
 
+                  const isExternal = item.href?.startsWith("http");
+
                   return (
                     <li key={item.label} className={styles.detailItem}>
                       {item.href ? (
-                        <a href={item.href} className={styles.detailLink}>
+                        <a
+                          href={item.href}
+                          className={styles.detailLink}
+                          {...(isExternal
+                            ? {
+                                target: "_blank",
+                                rel: "noopener noreferrer",
+                              }
+                            : {})}
+                        >
                           {content}
                         </a>
                       ) : (
