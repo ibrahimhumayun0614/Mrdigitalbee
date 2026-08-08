@@ -64,7 +64,7 @@ const DETAILS = [
   {
     icon: MapPin,
     label: "Studio",
-    value: "Dubai, United Arab Emirates",
+    value: "UAE, INDIA",
     href: null,
   },
 ] as const;
