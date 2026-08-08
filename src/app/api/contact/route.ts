@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { buildLeadEmail } from "@/lib/lead-email";
 
 const CONTACT_TO = process.env.CONTACT_TO_EMAIL ?? "info@mrdigitalbee.com";
 const SERVICES = new Set([
@@ -195,31 +196,15 @@ export async function POST(request: Request) {
     const from =
       process.env.CONTACT_FROM_EMAIL ?? `Mrdigital Bee <${user}>`;
 
+    const leadEmail = buildLeadEmail({ name, email, service, message });
+
     await transporter.sendMail({
       from,
       to: CONTACT_TO,
       replyTo: email,
-      subject: `New inquiry: ${service} — ${name}`,
-      text: [
-        "New contact form submission from Mrdigital Bee",
-        "",
-        `Name: ${name}`,
-        `Email: ${email}`,
-        `Service: ${service}`,
-        "",
-        "Message:",
-        message,
-      ].join("\n"),
-      html: `
-        <div style="font-family: system-ui, sans-serif; line-height: 1.6; color: #111;">
-          <h2 style="margin: 0 0 12px;">New contact form submission</h2>
-          <p style="margin: 0 0 8px;"><strong>Name:</strong> ${escapeHtml(name)}</p>
-          <p style="margin: 0 0 8px;"><strong>Email:</strong> ${escapeHtml(email)}</p>
-          <p style="margin: 0 0 16px;"><strong>Service:</strong> ${escapeHtml(service)}</p>
-          <p style="margin: 0 0 6px;"><strong>Message:</strong></p>
-          <p style="margin: 0; white-space: pre-wrap;">${escapeHtml(message)}</p>
-        </div>
-      `,
+      subject: `New lead: ${service} — ${name}`,
+      text: leadEmail.text,
+      html: leadEmail.html,
     });
 
     return Response.json({ ok: true });
@@ -229,13 +214,4 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
-}
-
-function escapeHtml(value: string) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
 }
