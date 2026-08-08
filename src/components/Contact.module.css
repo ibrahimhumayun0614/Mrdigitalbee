@@ -153,49 +153,6 @@ a.detailLink:hover {
   color: rgba(255, 255, 255, 0.92);
 }
 
-.social {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  margin-top: 1.15rem;
-}
-
-.socialLabel {
-  font-family: var(--font-body);
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.socialLinks {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.socialLink {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.35rem;
-  height: 2.35rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.25s ease;
-}
-
-.socialLink:hover {
-  background: #ffffff;
-  border-color: #ffffff;
-  color: #111111;
-  transform: translateY(-2px);
-}
-
 .formWrap {
   min-width: 0;
   animation: riseIn 0.75s ease 0.08s both;
