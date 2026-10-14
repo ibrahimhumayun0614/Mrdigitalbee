@@ -29,6 +29,16 @@ type Project = {
 
 const PROJECTS: Project[] = [
   {
+    title: "Layman Media Production",
+    category: "Websites",
+    description: [
+      "A cinematic marketing website for Layman Media Production, a studio creating brand films, corporate storytelling, photography, podcasts, and digital experiences.",
+      "The site walks visitors through their production process and services, with a clear path to start a project.",
+    ],
+    url: "https://www.laymanmediaproduction.com/",
+    image: "/projects/layman-media.png",
+  },
+  {
     title: "Credora Finance",
     category: "Websites",
     description: [
